@@ -1,0 +1,4 @@
+0.001   2017-06-24 (PERLANCAR) (unreleased)
+
+        - First release, modified from Log::Dispatch::Dir. Log::Dispatch::Dir
+          will later be changed to be based on us.
