@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::Exception;
 use Test::More 0.98;
-use Test::Needs;
+#use Test::Needs;
 
 use File::Temp qw(tempdir);
 use Dir::Write::Rotate;
@@ -61,8 +61,10 @@ subtest "filename_pattern" => sub {
 };
 
 subtest "filename_pattern: %{ext}" => sub {
-    test_needs "File::LibMagic";
-    test_needs "Media::Type::Simple";
+    #test_needs "File::LibMagic";
+    #test_needs "Media::Type::Simple";
+    plan skip_all => "File::LibMagic / Media::Type::Simple not available"
+        unless eval { require File::LibMagic; require Media::Type::Simple; 1 };
 
     empty_dir($dir);
     my $dwr = Dir::Write::Rotate->new(
