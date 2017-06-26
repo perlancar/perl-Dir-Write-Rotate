@@ -199,7 +199,7 @@ sub rotate {
  use Dir::Write::Rotate;
 
  my $dwr = Dir::Write::Rotate->new(
-     name               => 'somedir.log',            # required
+     path               => 'somedir.log',            # required
      filename_pattern   => '%Y-%m-%d-%H%M%S.pid-%{pid}.%{ext}', # optional
      filename_sub       => sub { ... },              # optional
      max_size           => undef,                    # optional
