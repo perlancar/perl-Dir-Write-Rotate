@@ -1,12 +1,19 @@
 package Dir::Write::Rotate;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;
 use warnings;
 
 use Fcntl qw(:DEFAULT);
+
+sub _debug {
+    return unless $ENV{DIR_WRITE_ROTATE_DEBUG};
+    warn "[Dir::Write::Rotate] debug: $_[0]\n";
+}
 
 sub new {
     my ($pkg, %args) = @_;
@@ -42,6 +49,8 @@ sub new {
     if (keys %args) {
         die "Unknown argument(s): ".join(", ", sort keys %args);
     }
+    _debug "instantiated with params: ".
+        join(", ", map {"$_=$self->{$_}"} sort keys %$self);
     bless $self, $pkg;
 }
 
@@ -154,6 +163,7 @@ sub rotate {
     if (defined($mf) && @entries > $mf) {
         for (splice @entries, $mf) {
             my $fpath = "$path/$_->{name}";
+            _debug "rotate: unlinking $fpath (max_files $mf exceeded)";
             unlink $fpath or warn "Can't unlink $fpath: $!";
         }
     }
@@ -165,6 +175,7 @@ sub rotate {
             if ($_->{age} > $ma) {
                 for (splice @entries, $i) {
                     my $fpath = "$path/$_->{name}";
+                    _debug "rotate: unlinking $fpath (age=$_->{age}) (max_age $ma exceeded)";
                     unlink $fpath or warn "Can't unlink $fpath: $!";
                 }
                 last;
@@ -182,6 +193,7 @@ sub rotate {
             if ($tot_size > $ms) {
                 for (splice @entries, $i) {
                     my $fpath = "$path/$_->{name}";
+                    _debug "rotate: unlinking $fpath (size=$_->{size}) (max_size $ms exceeded)";
                     unlink $fpath or warn "Can't unlink $fpath: $!";
                 }
                 last;
@@ -320,6 +332,14 @@ Write a file with content C<$msg>.
 =head2 rotate
 
 Will be called automatically by write.
+
+
+=head1 ENVIRONMENT
+
+=head2 DIR_WRITE_ROTATE_DEBUG
+
+Bool. If set to true, will print debug messages to stderr (particularly when
+instantiated and when deleting rotated files).
 
 
 =head1 SEE ALSO
